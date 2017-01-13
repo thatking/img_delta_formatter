@@ -1,0 +1,12 @@
+name: Image Delta Formatter
+type: module
+description: 'Add an Image delta formatter for image field.'
+# core: 8.x
+package: Field types
+dependencies:
+  - image
+
+# Information added by Drupal.org packaging script on 2017-1-12
+version: '8.x-1.0-dev'
+core: '8.x'
+project: 'img_delta_formatter'

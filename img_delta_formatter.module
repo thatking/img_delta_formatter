@@ -1,0 +1,77 @@
+<?php
+
+/**
+ * @file
+ * Add an URL formatter for image field
+ */
+use Drupal\Component\Utility\Unicode;
+use Drupal\image\Entity\ImageStyle;
+
+
+/**
+ * Implements hook_theme().
+ */
+function img_delta_formatter_theme() {
+  return array(
+    'img_delta_formatter' => array(
+      'variables' => array(
+        'item' => NULL,
+        'item_attributes' => NULL,
+        'url' => NULL,
+        'image_style' => NULL,
+        'deltas' => NULL,
+        'deltas_reversed' => NULL,
+      ),
+    ),
+  );
+}
+
+/**
+ * Returns HTML for an image url field formatter.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - item: An array of image data.
+ *   - image_style: An optional image style.
+ *   - path: An optional array containing the link 'path' and link 'options'.
+ *
+ * @ingroup themeable
+ */
+function template_preprocess_img_delta_formatter(&$variables) {
+  // if ($variables['deltas']) {
+    // $variables['image']['#deltas'] = $variables['deltas']; 
+  // }
+  // if ($variables['deltas_reversed']) {
+    // $variables['image']['#deltas_reversed'] = $variables['deltas_reversed']; 
+  // }
+  if ($variables['image_style']) {
+    $variables['image'] = array(
+      '#theme' => 'image_style',
+      '#style_name' => $variables['image_style'],
+    );
+  }
+  else {
+    $variables['image'] = array(
+      '#theme' => 'image',
+    );
+  }
+  $variables['image']['#attributes'] = $variables['item_attributes'];
+
+  $item = $variables['item'];
+
+  // Do not output an empty 'title' attribute.
+  if (Unicode::strlen($item->title) != 0) {
+    $variables['image']['#title'] = $item->title;
+  }
+
+  if (($entity = $item->entity) && empty($item->uri)) {
+    $variables['image']['#uri'] = $entity->getFileUri();
+  }
+  else {
+    $variables['image']['#uri'] = $item->uri;
+  }
+
+  foreach (array('width', 'height', 'alt') as $key) {
+    $variables['image']["#$key"] = $item->$key;
+  }
+}
